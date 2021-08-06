@@ -12,7 +12,7 @@ HD_98_Sites
 
 
 ggplot() + 
-  geom_sf(data = HD_98_Sites, size = 3, color = "black", fill = "cyan1") + 
+  geom_sf(data = HD_98_Sites, size = 3, aes(color = Lineage), fill = "cyan1") + 
   ggtitle("AOI Boundary Plot") + 
   coord_sf()
 
@@ -25,7 +25,7 @@ st_bbox(EO)
 EO
 
 ggplot() + 
-  geom_sf(data = EO, size = 3, color = "black", fill = "cyan1") + 
+  geom_sf(data = EO, size = 3, aes(color = Lin), fill = "cyan1") + 
   ggtitle("AOI Boundary Plot") + 
   coord_sf()
 
@@ -39,7 +39,7 @@ st_bbox(Pram_res)
 Pram_res
 
 ggplot() + 
-  geom_sf(data = Pram_res, size = 3, color = "black", fill = "cyan1") + 
+  geom_sf(data = Pram_res, size = 3, aes(color = Li), fill = "cyan1") + 
   ggtitle("AOI Boundary Plot") + 
   coord_sf()
 
