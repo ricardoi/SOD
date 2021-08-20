@@ -13,22 +13,28 @@ setwd("/Users/ricardoi/Box/OSU/SOD/shapefiles/")
 world <- ne_countries(scale = "medium", returnclass = "sf")
 class(world)
 
-sites <- data.frame(longitude = c(-121, -121.5),
-                    latitude = c(41, 42.5))
-sites
+library("tools")
+states$ID <- toTitleCase(states$ID)
+head(states)
+
+
+sites <- data.frame(longitude=HD_98_Sites$Longitude, 
+                    latitude=HD_98_Sites$Latitude)
+head(sites)
 
 ggplot(data = world) +
   geom_sf() +
-  geom_point(data = sites, aes(x = longitude, y = latitude), size = 4, 
+  geom_point(data = sites, aes(x = longitude, y = latitude), size = 1, 
              shape = 23, fill = "darkred") +
-  coord_sf(xlim = c(-120, -124), ylim = c(40, 44), expand = FALSE)
+  geom_sf(data = states, fill = NA) + 
+  coord_sf(xlim = c(-124.5, -124), ylim = c(42, 42.5), expand = T)
 
 #---- HD_98_Sites
 HD_98_Sites <- st_read("Pram_HD_eradicationNA1EU1/HD_98_Sites.shp")
 st_geometry_type(HD_98_Sites)
 st_crs(HD_98_Sites)
 st_bbox(HD_98_Sites)
-HD_98_Sites
+HD_98_Sites[,10:11]
 
 
 ggplot() + 
