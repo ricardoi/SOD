@@ -21,7 +21,7 @@ library(maps)
 library(rgeos)
 library(geosphere)
 library(RColorBrewer)
-library("colorspace") 
+library("colorspace")
 data(wrld_simpl) #add country boundary to the map
 #-----------------------------------------------------
 #-----------------------------------------------------
@@ -81,10 +81,12 @@ zrCase <- range (0.000000000001,0.50000000000)     ###
 #-----------------------------------------------------
 ## 1.3 Read in a .tif file
 #j<-file.choose()
-setwd("~/Box/OSU/Oregon-forest/foresti020l/")
-forestden <- raster("foresti020l.tif")  # data come from FIA https://www.fia.fs.fed.us/library/maps/index.php
+setwd("~/Box/OSU/Maps/mr118_wdycov/")
+forestden <- raster("mr118_wdycov/dblbnd.adf")  # data come from LEMMA\GNN
 
-plot(forestden)               
+forestden@data@attributes[[1]]
+
+plot(forestden)
 plot(wrld_simpl, add=TRUE)
 map('lakes', add=TRUE, fill=TRUE, col='#31688EFF', boundary='black')
 #-----------------------------------------------------
@@ -109,7 +111,7 @@ map('lakes', add=TRUE, fill=TRUE, col='#31688EFF', boundary='black')
   ***
   # 2. Plot 5min by 5min and aggregated maps for Western Hemisphere
   ***
-  *** 
+  ***
   ```{r fig.width=10, fig.height=7, dpi=100}
 #-----------------------------------------------------
 #-----------------------------------------------------
@@ -117,7 +119,7 @@ map('lakes', add=TRUE, fill=TRUE, col='#31688EFF', boundary='black')
 rowstartW <- round((90-latitoW)/180*nrow(cropharvest))+1 #find the start row number,
 numrowW   <- round((latitoW-latifromW)/180*nrow(cropharvest)) # calculate the total row number within latitude range
 cropvalueW <- getValues(cropharvest, row=rowstartW,nrows=numrowW)  #extract values from the Map for the range of specified latitude
-cropselectW <- matrix(cropvalueW, ncol=ncol(cropharvest), byrow=TRUE)# save data as matrix 
+cropselectW <- matrix(cropvalueW, ncol=ncol(cropharvest), byrow=TRUE)# save data as matrix
 colstartW <- (180+longifromW)*12+1  #find the start column number
 numcolW <- (longitoW-longifromW)*12 #selected total column number
 scolW <- numcolW+colstartW-1  #the end of column number
@@ -147,7 +149,7 @@ map('lakes', add=TRUE, fill=TRUE, col='skyblue', boundary='black')
   ***
   #  3.  Aggregate raster as specified resolution, Total Mean
   ***
-  *** 
+  ***
   ```{r fig.width=10, fig.height=7, dpi=100}
 #-----------------------------------------------------
 #-----------------------------------------------------
@@ -179,7 +181,7 @@ map('lakes', add=TRUE, fill=TRUE, col='skyblue', boundary='black')
   ***
   #  4.  Function : generate data frame with GIS info. and values of harvest cropland fraction
   ***
-  *** 
+  ***
   ```{r fig.width=10, fig.height=7, dpi=100}
 #-----------------------------------------------------
 #-----------------------------------------------------
@@ -197,7 +199,7 @@ FuncGIScroplandW <- function(cropRasterW, HCFcutoff){
     me<-(WcellNum[k]-1)%/%colnumsW
     latiW[k]<-latitoW-me*CellDegree
     logiW[k]<-(WcellNum[k]-1-me*colnumsW)*CellDegree+longifromW
-  }    
+  }
   cropdataW <- cbind(latiW, logiW, cellNumValueW)
   return(as.data.frame( cropdataW))
 }
@@ -212,11 +214,11 @@ FuncGIScroplandW <- function(cropRasterW, HCFcutoff){
   ***
   #  5. Inverse Power Law Model
   ***
-  *** 
+  ***
   ```{r fig.width=10, fig.height=7, dpi=100}
 #-----------------------------------------------------
 #-----------------------------------------------------
-networkbetaW <- function(beta3, cutoffadja3){   
+networkbetaW <- function(beta3, cutoffadja3){
   ##############################################
   #### create adjacency matrix
   ####
@@ -224,17 +226,17 @@ networkbetaW <- function(beta3, cutoffadja3){
   latilongimatr3 <- cropdataW[1:rownumber13,c(2,1)]# save the latitude and longitude as new matrix
   #---- use Geosphere package, function distVincentyEllipsoid() is used to calculate the distance, defult distance is meter
   dvse <- distVincentyEllipsoid(c(0,0), cbind(1, 0)) # reference of standard distance in meter for one degree
-  
+
   latilongimatr3 <- as.matrix(latilongimatr3)
   TemMat <- matrix(-999, nrow( latilongimatr3),nrow(latilongimatr3))
-  
+
   for (i in 1:nrow(latilongimatr3)) {
     TemMat[i, ] <- distVincentyEllipsoid(latilongimatr3[i,], latilongimatr3)/dvse
   }
-  
+
   distancematr3 <- TemMat
   #---- end of code
-  
+
   distancematrexp3 <- distancematr3^(-beta3)  #use function C=AX^(-beta), here A=1, X=distancematr3
   cropmatr3 <- cropdataW[1:rownumber13,3] # complete gravity model with crop data
   cropmatr13 <- matrix(cropmatr3,,1)
@@ -251,7 +253,7 @@ networkbetaW <- function(beta3, cutoffadja3){
   #V(cropdistancematrix3)$color=colororder3
   V(cropdistancematrix3)$label.cex=0.7
   E(cropdistancematrix3)$color="red"
-  edgeweight3<-E(cropdistancematrix3)$weight*10000 
+  edgeweight3<-E(cropdistancematrix3)$weight*10000
   #plot(cropdistancematrix3,vertex.size=povalue3*500,edge.arrow.size=0.2,edge.width=edgeweight3,vertex.label=NA,main=paste(crop,sphere2, 'adjacency matrix threshold>',cutoffadja3, ', beta=',beta3)) # network with weighted node sizes
   #plot(cropdistancematrix3,vertex.size=10,edge.arrow.size=0.2,edge.width=edgeweight3,vertex.label=NA,main=paste(crop,sphere2, 'adjacency matrix threshold>',cutoffadja3, ', beta=',beta3)) # network with identical node size
   knnpref0<-graph.knn(cropdistancematrix3,weights=NA)$knn
@@ -260,7 +262,7 @@ networkbetaW <- function(beta3, cutoffadja3){
   knnpref<-knnpref0*degreematr
   if(max(knnpref)==0){knnprefp=0}else
     if(max(knnpref)>0){knnprefp=knnpref/max(knnpref)/6}
-  
+
   ##############################################
   ####  node degree, node strengh
   ####
@@ -270,7 +272,7 @@ networkbetaW <- function(beta3, cutoffadja3){
     if(max(nodestrength)>0){nodestr=nodestrength/max(nodestrength)/6}
   ##############################################
   ####  betweenness centrality
-  ####    
+  ####
   between <- betweenness(cropdistancematrix3)
   between[is.na(between)] <- 0
   if(max(between)==0){betweenp=0}else
@@ -285,7 +287,7 @@ networkbetaW <- function(beta3, cutoffadja3){
     if(max(ev)!=0){evp=ev/max(ev)/6}
   ##############################################
   ####   plot index layer
-  ####    
+  ####
   index<-knnprefp+evp+betweenp+nodestr
   indexpre<- cropharvestRasterWaggValues
   indexpre[]<-0
@@ -300,7 +302,7 @@ networkbetaW <- function(beta3, cutoffadja3){
   ***
   #  6. Negative Exponential Model
   ***
-  *** 
+  ***
   ```{r fig.width=10, fig.height=7, dpi=100}
 #-----------------------------------------------------
 #-----------------------------------------------------
@@ -311,20 +313,20 @@ networkgammaW <- function(gamma3,cutoffadja3){
   rownumber13 <- nrow(cropdataW)
   latilongimatr3 <- cropdataW[1:rownumber13,c(2,1)]# save the latitude and longitude as new matrix  #---- use Geosphere package, function distVincentyEllipsoid() is used to calculate the distance, defult distance is meter
   dvse <- distVincentyEllipsoid(c(0,0), cbind(1, 0)) # reference of standard distance in meter for one degree
-  
+
   latilongimatr3 <- as.matrix(latilongimatr3)
   TemMat <- matrix(-999, nrow( latilongimatr3),nrow(latilongimatr3))
-  
+
   for (i in 1:nrow(latilongimatr3)) {
     TemMat[i, ] <- distVincentyEllipsoid(latilongimatr3[i,], latilongimatr3)/dvse
   }
-  
+
   distancematr3 <- TemMat
   #---- end of code
-  
+
   eulernumber<-exp(1)
   distancematrexponential3<-eulernumber^(-gamma3*distancematr3)# exponential model
-  
+
   cropmatr3<-cropdataW[1:rownumber13,3] # complete gravity model with crop data
   cropmatr13<-matrix(cropmatr3,,1)
   cropmatr23<-matrix(cropmatr3,1,)
@@ -340,7 +342,7 @@ networkgammaW <- function(gamma3,cutoffadja3){
   #V(cropdistancematrix3)$color=colororder3
   V(cropdistancematrix3)$label.cex=0.7
   E(cropdistancematrix3)$color="red"
-  edgeweight3<-E(cropdistancematrix3)$weight*10000 
+  edgeweight3<-E(cropdistancematrix3)$weight*10000
   #plot(cropdistancematrix3,vertex.size=povalue3*500,edge.arrow.size=0.2,edge.width=edgeweight3,vertex.label=NA,main=paste(crop,sphere2, 'adjacency matrix threshold>',cutoffadja3, ', beta=',beta3)) # network with weighted node sizes
   #plot(cropdistancematrix3,vertex.size=10,edge.arrow.size=0.2,edge.width=edgeweight3,vertex.label=NA,main=paste(crop,sphere2, 'adjacency matrix threshold>',cutoffadja3, ', beta=',beta3)) # network with identical node size
   knnpref0<-graph.knn(cropdistancematrix3,weights=NA)$knn
@@ -349,7 +351,7 @@ networkgammaW <- function(gamma3,cutoffadja3){
   knnpref<-knnpref0*degreematr
   if(max(knnpref)==0){knnprefp=0}else
     if(max(knnpref)>0){knnprefp=knnpref/max(knnpref)/6}
-  
+
   ##############################################
   ####  node degree, node strengh
   ####
@@ -359,7 +361,7 @@ networkgammaW <- function(gamma3,cutoffadja3){
     if(max(nodestrength)>0){nodestr=nodestrength/max(nodestrength)/6}
   ##############################################
   ####  betweenness centrality
-  ####    
+  ####
   between<-betweenness(cropdistancematrix3)
   between[is.na(between)]<-0
   if(max(between)==0){betweenp=0}else
@@ -374,14 +376,14 @@ networkgammaW <- function(gamma3,cutoffadja3){
     if(max(ev)!=0){evp=ev/max(ev)/6}
   ##############################################
   ####   plot index layer
-  ####    
+  ####
   index<-knnprefp+evp+betweenp+nodestr
   indexpre <- cropharvestRasterWaggValues
   indexpre[]<-0
   indexpre[cellNumW]<-index
   indexv3<-indexpre
   return(indexv3)
-  
+
 }
 #-----------------------------------------------------
 #-----------------------------------------------------
@@ -393,7 +395,7 @@ networkgammaW <- function(gamma3,cutoffadja3){
   ***
   #  7. Total mean, apply inverse power law model and negative exponential model
   ***
-  *** 
+  ***
   ```{r fig.width=10, fig.height=7, dpi=100}
 #-----------------------------------------------------
 #-----------------------------------------------------
@@ -536,7 +538,7 @@ index45exm <- networkgammaW(gamma2,cutoffadja1)
   ***
   #  8.  Aggregate raster as specified resolution, Land Mean
   ***
-  *** 
+  ***
   ```{r fig.width=10, fig.height=7, dpi=100}
 #-----------------------------------------------------
 #-----------------------------------------------------
@@ -566,7 +568,7 @@ map('lakes', add=TRUE, fill=TRUE, col='#31688EFF', boundary='black')
   ***
   #  9. Land mean, apply inverse power law model and negative exponential model
   ***
-  *** 
+  ***
   ```{r fig.width=10, fig.height=7, dpi=100}
 #-----------------------------------------------------
 #-----------------------------------------------------
@@ -716,7 +718,7 @@ index90exm <- networkgammaW(gamma2,cutoffadja1)
   ***
   #  10. Save CCRI raster
   ***
-  *** 
+  ***
   ```{r fig.width=10, fig.height=7, dpi=100}
 #-----------------------------------------------------
 #-----------------------------------------------------
