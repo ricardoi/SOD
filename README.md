@@ -1,9 +1,8 @@
 # SOD
 ## Sudden Oak Death
-Ricardo I. Alcalá-Briseño
-Postdoc at Botany and Plant Pathology
-Oregon State University
-
+Ricardo I. Alcalá-Briseño \
+Postdoc at Botany and Plant Pathology \
+Oregon State University \
 
 
 ### Taxonomy of _Phythoptora ramorum_
@@ -14,9 +13,9 @@ Family: 	Peronosporaceae \
 Genus: 	  Phytophthora \
 Species: 	_P. ramorum_
 
-Host range:
+Host range:\
 Notholithocarpus densiflorus -> tanoak
 Quercues spp. (Lobate) -> red oaks*
 
 
-* I need more detail 
+* I need more details of number of species 
