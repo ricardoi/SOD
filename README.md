@@ -14,9 +14,10 @@ Genus: 	  Phytophthora \
 Species: 	_P. ramorum_
 
 
-Host range:\
+> Host range:\
 Notholithocarpus densiflorus -> tanoak \
 Quercues spp. (Lobate) -> red oaks* \
 
+Evidence suggest that _P. ramorum_ spreads from nurseries to forests.
 
 * I need more details of number of species 
