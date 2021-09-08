@@ -13,11 +13,18 @@ Family: 	Peronosporaceae \
 Genus: 	  Phytophthora \
 Species: 	_P. ramorum_
 
+There are 4 clonal lineages:
+> NA1 - North America 1 \
+NA2 - North America 2 \ 
+EU1 - Europe 1 \
+EU2 - Europe 2
+Note: Name based on origin and time of isolation 
 
-> Host range:\
-Notholithocarpus densiflorus -> tanoak \
+### Host range:\
+> Notholithocarpus densiflorus -> tanoak \
 Quercues spp. (Lobate) -> red oaks* \
+* I need more details of number of species 
 
 Evidence suggest that _P. ramorum_ spreads from nurseries to forests.
 
-* I need more details of number of species 
+
