@@ -13,9 +13,10 @@ Family: 	Peronosporaceae \
 Genus: 	  Phytophthora \
 Species: 	_P. ramorum_
 
+
 Host range:\
-Notholithocarpus densiflorus -> tanoak
-Quercues spp. (Lobate) -> red oaks*
+Notholithocarpus densiflorus -> tanoak \
+Quercues spp. (Lobate) -> red oaks* \
 
 
 * I need more details of number of species 
