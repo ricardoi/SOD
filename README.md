@@ -1,16 +1,18 @@
 # SOD
-Postdoc at Oregon State University
+## Sudden Oak Death
+Ricardo I. Alcalá-Briseño
+Postdoc at Botany and Plant Pathology
+Oregon State University
 
 
 
-
-_Phythoptora ramorum_
+### Taxonomy of _Phythoptora ramorum_
 > Clade: 	SAR \
-Phylum: 	Oomycota
-Order: 	  Peronosporales
-Family: 	Peronosporaceae
-Genus: 	  Phytophthora
-Species: 	P. ramorum
+Phylum: 	Oomycota \
+Order: 	  Peronosporales \
+Family: 	Peronosporaceae \
+Genus: 	  Phytophthora \
+Species: 	_P. ramorum_
 
 Host range:
 Notholithocarpus densiflorus -> tanoak
