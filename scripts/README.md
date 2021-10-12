@@ -1,5 +1,8 @@
-# Environments and other programs for SOD-ai epidemiology
+# SOD-ai epidemiology
+## Environments and other programs  
 
+
+Installation on A4000
 ```pyhton
 # To activate this environment, use
 #$ conda activate gdal
