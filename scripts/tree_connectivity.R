@@ -17,7 +17,7 @@ forestden <- raster("rasters/lide3_ba_2017.tif")
 # forestden <- read_stars("rasters/lide3_ba_2017.tif")  
 
 fd <- projectRaster(forestden, 
-      crs ="+proj=utm +zone=18 +ellps=WGS84 +datum=WGS84 +units=m +no_defs")
+      crs ="+proj=longlat +zone=18 +ellps=WGS84 +datum=WGS84 +units=m +no_defs") #utm
 fd
 st_crs(fd)
 crs(fd)
@@ -32,3 +32,5 @@ map('lakes', add=TRUE, fill=TRUE, col='#31688EFF', boundary='black')
 # Exploring raster
 st_crs(fd)
 crs(fd)
+
+
