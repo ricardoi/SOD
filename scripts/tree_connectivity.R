@@ -23,14 +23,20 @@ st_crs(fd)
 crs(fd)
 
 # transforming proj = aea (Azimutal equal area)
+# Range for Southwestern Oregon area               ###
+latifrom  <- -124.5 #latitude: from -48 to 76      ###
+latito    <- -124                                  ###
+longifrom <- 42 #longitude: from -24 to 180       ###
+longito   <- 42.5                                 ###
 
 # ploting map
 plot(fd)
 plot(wrld_simpl, add=TRUE)
 map('lakes', add=TRUE, fill=TRUE, col='#31688EFF', boundary='black')
+#-----------------------------------------------------
+plot(fd, xlim=c(latifrom,latito), ylim=c(longifrom,longito))
+# plot(wrld_simpl, add=TRUE)
+map('lakes', add=TRUE, fill=TRUE, col='skyblue', boundary='black')
+#-----------------------------------------------------
 
-# Exploring raster
-st_crs(fd)
-crs(fd)
-
-
+#------------
