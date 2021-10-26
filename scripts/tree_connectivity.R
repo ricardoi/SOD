@@ -10,28 +10,43 @@ data(wrld_simpl) #add country boundary to the map
 
 #----- setting working directory
 setwd("~/Documents/Maps/Tree_species/")
-#-------------------------------------
+#-----------------------------------------------------
 # Set map resolution
 resolutionscale <- 6  # 6 of 5-min cells for 0.5 degree ###
-CellDegree      <- 0.5       
+CellDegree <- 0.5                                  ###       
 tree <- 'tanoek'                                   ###
-
+#-----------------------------------------------------
+# Customize crop and values of parameters
+beta0 <- 0.5                                       ###
+beta <- 1                                          ###
+beta1 <- 1.5                                       ###
+gamma00 <- 0.05                                    ###
+gamma0 <- 0.1                                      ###
+gamma <- 0.2                                       ###
+gamma1 <- 0.3                                      ###
+gamma2 <- 1                                        ###
+crop <- 'forest'                                   ###
+pcutoff0 <- 0.0015  #position cutoff               ###
+pcutoff <- 0.002  #position cutoff                 ###
+pcutoff1 <- 0.0025  #position cutoff               ###
+cutoffadja0 <- 0.001 # cutoff of adjancecy matrix  ###
+cutoffadja <- 0.0001 # cutoff of adjancecy matrix  ###
+cutoffadja1 <- 0.00001 # cutoff of adjancecy matrix###
+#-----------------------------------------------------
+# transforming proj = aea (Azimutal equal area)
+# Range for Southwestern Oregon area               ###
+latifrom  <- -124.5 #latitude: from -48 to 76      ###
+latito    <- -123.7                                ###
+longifrom <- 42 #longitude: from -24 to 180        ###
+longito   <- 42.5                                  ###
+#-----------------------------------------------------
 #----- loading data
 forestden <- raster("rasters/lide3_ba_2017.tif")  
-# forestden <- read_stars("rasters/lide3_ba_2017.tif")  
-
 fd <- projectRaster(forestden, 
       crs ="+proj=longlat +zone=18 +ellps=WGS84 +datum=WGS84 +units=m +no_defs") #utm
 fd
 st_crs(fd)
 crs(fd)
-
-# transforming proj = aea (Azimutal equal area)
-# Range for Southwestern Oregon area               ###
-latifrom  <- -124.5 #latitude: from -48 to 76      ###
-latito    <- -123.7                                  ###
-longifrom <- 42 #longitude: from -24 to 180       ###
-longito   <- 42.5                                 ###
 
 # ploting map
 plot(fd)
@@ -74,15 +89,15 @@ map('lakes', add=TRUE, fill=TRUE, col='skyblue', boundary='black')
 #-----------------------------------------------------
 # 9.1 Apply pcutoff = 0.0015
 fddata <- FuncGIScroplandW(cropharvestRasterAgg, pcutoff0) # pcutoff0 = 0.0015, get data
-cropharvestRasterWaggValues <- getValues(cropharvestRasterAgg) # get raster values for model
-cellNumW <- which(getValues(cropharvestRasterWagg) > pcutoff0) # get cell number for model
+cropharvestRasterAggValues <- getValues(cropharvestRasterAgg) # get raster values for model
+cellNumW <- which(getValues(cropharvestRasterAgg) > pcutoff0) # get cell number for model
 length(cellNumW) # number of pixel
 #-----------------------------------------------------
 #-----------------------------------------------------
 # 9.1a Apply inverse power law model
-index328 <- networkbetaW(beta0,cutoffadja0)
-index329 <- networkbetaW(beta,cutoffadja0)
-index330 <- networkbetaW(beta1,cutoffadja0)
+index328 <- networkbeta(fd, beta0, cutoffadja0)
+index329 <- networkbeta(beta,cutoffadja0)
+index330 <- networkbeta(beta1,cutoffadja0)
 
 index331 <- networkbetaW(beta0,cutoffadja)
 index332 <- networkbetaW(beta,cutoffadja)
