@@ -10,7 +10,10 @@ data(wrld_simpl) #add country boundary to the map
 
 #----- setting working directory
 setwd("~/Documents/Maps/Tree_species/")
-
+#-------------------------------------
+# Set map resolution
+resolutionscale <- 6  # 6 of 5-min cells for 0.5 degree ###
+CellDegree      <- 0.5       
 
 #----- loading data
 forestden <- raster("rasters/lide3_ba_2017.tif")  
@@ -39,4 +42,9 @@ plot(fd, xlim=c(latifrom,latito), ylim=c(longifrom,longito))
 map('lakes', add=TRUE, fill=TRUE, col='skyblue', boundary='black')
 #-----------------------------------------------------
 
-#------------
+
+# Aggregate raster total mean
+cropharvestRasterAgg <- aggregate(fd, fact = resolutionscale, fun=sum, na.action = na.omit ) #aggregate raster as specified resolution, function=sum
+cropharvestRasterAgg <- cropharvestRasterAgg /resolutionscale /resolutionscale
+totalmean <- cropharvestRasterAgg
+structure(cropharvestRasterAgg)
