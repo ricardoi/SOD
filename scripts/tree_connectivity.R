@@ -53,16 +53,42 @@ structure(cropharvestRasterAgg)
 palette = colPallett <- c("#F6E726FF","#FEBC2AFF","#F9963FFF", "#EB7557FF", "#D7566CFF","#BE3885FF", "#B32C8EFF","#AD2793FF", "#A11A9CFF", "#8B0AA5FF", "#7C02A8FF", "#7401A8FF", "#6C00A8FF", "#6400A7FF", "#5C01A6FF", "#5C01A6FF", "#5402A3FF","#5402A3FF", "#4B03A1FF", "#43039EFF", "#3A049AFF", "#3A049AFF", "#300597FF", "#300597FF", "#270591FF","#270591FF",  "#1B068DFF","#1B068DFF", "#1B068DFF", "#0D0887FF", "#0D0887FF","#0D0887FF", "#0D0887FF", "#0D0887FF","#0D0887FF", "#0D0887FF", "#0D0887FF", "#0D0887FF", "#0D0887FF", "#0D0887FF","#0D0887FF", "#0D0887FF","#0D0887FF")
 
 #-----------------------------------------------------
-# Plot aggregated raster of harvested area of cropland
+# Plot aggregated raster of harvested area of cropland of the PNW
 zrAggTmean <- range( 0.000000000001, max(getValues(totalmean), na.rm = TRUE))
 plot(cropharvestRasterAgg, main=paste('Harvested area fraction based on "total mean" :', 
-                                       tree, CellDegree, 'degree'), col=palette, zlim= zrAggTmean,  
-                                      xaxt='n',  yaxt='n', axes=F, box=F)
-plot(countriesLow, add=TRUE)  #add country boundary to the map
+                                       tree, CellDegree, 'degree'), 
+     col=palette, zlim= zrAggTmean, xaxt='n',  yaxt='n', axes=F, box=F)
+plot(counties, add=TRUE)  #add country boundary to the map
 map('lakes', add=TRUE, fill=TRUE, col='skyblue', boundary='black')
 
 #-----------------------------------------------------
-# Plot aggregated raster of harvested area of cropland for Caribbean area
-plot(cropharvestRasterWagg, main=paste('Harvested area fraction based on "total mean" :', crop, CellDegree, 'degree Caribbean area'), col=palette2, zlim= zrAggTmean,  xaxt='n',  yaxt='n', axes=F, box=F, ylim=c(latifrom,latito), xlim=c(longifrom,longito))
+# Plot aggregated raster of harvested area of cropland for Southwest Oregon
+plot(cropharvestRasterAgg, main=paste('Harvested area fraction based on "total mean" :', 
+                                      tree, CellDegree, 'degree PNW area'), 
+     col=palette, zlim= zrAggTmean,  xaxt='n',  yaxt='n', axes=F, box=F, xlim=c(latifrom,latito), ylim=c(longifrom,longito))
 plot(countriesLow, add=TRUE)  #add country boundary to the map
 map('lakes', add=TRUE, fill=TRUE, col='skyblue', boundary='black')
+
+#  9. Land mean, apply inverse power law model and negative exponential model
+
+#-----------------------------------------------------
+# 9.1 Apply pcutoff = 0.0015
+fddata <- FuncGIScroplandW(cropharvestRasterAgg, pcutoff0) # pcutoff0 = 0.0015, get data
+cropharvestRasterWaggValues <- getValues(cropharvestRasterAgg) # get raster values for model
+cellNumW <- which(getValues(cropharvestRasterWagg) > pcutoff0) # get cell number for model
+length(cellNumW) # number of pixel
+#-----------------------------------------------------
+#-----------------------------------------------------
+# 9.1a Apply inverse power law model
+index328 <- networkbetaW(beta0,cutoffadja0)
+index329 <- networkbetaW(beta,cutoffadja0)
+index330 <- networkbetaW(beta1,cutoffadja0)
+
+index331 <- networkbetaW(beta0,cutoffadja)
+index332 <- networkbetaW(beta,cutoffadja)
+index333 <- networkbetaW(beta1,cutoffadja)
+
+index334 <- networkbetaW(beta0,cutoffadja1)
+index335 <- networkbetaW(beta,cutoffadja1)
+index336 <- networkbetaW(beta1,cutoffadja1)
+
