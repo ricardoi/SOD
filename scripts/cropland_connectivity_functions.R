@@ -40,10 +40,10 @@ networkbeta <- function(cropdata, beta3, cutoffadja3){
   dvse <- geosphere::distVincentyEllipsoid(c(0,0), cbind(1, 0)) # reference of standard distance in meter for one degree
   
   latilongimatr3 = as.matrix(latilongimatr3)
-  TemMat <- matrix(-999, nrow( latilongimatr3),nrow(latilongimatr3))
+  TemMat <- matrix(NA, nrow(latilongimatr3), nrow(latilongimatr3))
   
-  for (i in 1:nrow(latilongimatr3)) {
-    TemMat[i, ] <- distVincentyEllipsoid(latilongimatr3[i,], latilongimatr3)/dvse
+  for (i in 1:nrow(latilongimatr3)){
+    TemMat[i, ] <- geosphere::distVincentyEllipsoid(latilongimatr3[i,], latilongimatr3)/dvse
   }
   
   distancematr3 = TemMat
