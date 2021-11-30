@@ -94,14 +94,15 @@ palette = colPallett <- c("#F6E726FF","#FEBC2AFF","#F9963FFF", "#EB7557FF", "#D7
 # Plot aggregated raster of harvested area of cropland for Southwest Oregon
 plot(cropharvestRasterAgg, main=paste('Harvested area fraction based on "total mean" :', 
                                       tree, CellDegree, 'degree PNW area'), 
-     col=palette, zlim= zrAggTmean,  xaxt='n',  yaxt='n', axes=F, box=F, xlim=c(latifrom,latito), ylim=c(longifrom,longito))
+     col=palette,  xaxt='n',  yaxt='n', axes=F, box=F, xlim=c(latifrom,latito), ylim=c(longifrom,longito))
 worldmap <- getMap(resolution = "high")
 NorthAmerica <- worldmap[which(worldmap$REGION == "North America"),]
 plot(NorthAmerica, add=TRUE)  #add country boundary to the map
 map('lakes', add=TRUE, fill=TRUE, col='skyblue', boundary='black')
 
-#  9. Land mean, apply inverse power law model and negative exponential model
 
+
+#  9. Land mean, apply inverse power law model and negative exponential model
 #-----------------------------------------------------
 # 9.1 Apply pcutoff = 0.0015
 fddata <- FuncGIScroplandW(cropharvestRasterAgg, pcutoff0) # pcutoff0 = 0.0015, get data
