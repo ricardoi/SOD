@@ -79,8 +79,13 @@ map('lakes', add=TRUE, fill=TRUE, col='skyblue', boundary='black')
 res(fd.c)
 dim(fd.c)
 cellStats(fd.c, 'sum')
-vals <- round(getValues(fd.c))
-table(vals)
+
+# Normalizing the data values
+fd.max <- max(na.omit((values(fd.c))))
+values(fd.c) <- values(fd.c)/fd.max
+#
+#vals <- round(getValues(fd.c))
+#table(vals)
 # Aggregate raster total mean
 cropharvestRasterAgg <- aggregate(fd.c, fact = resolutionscale, fun=sum, na.action = na.omit) #aggregate raster as specified resolution, function=sum
 cropharvestRasterAgg <- cropharvestRasterAgg /resolutionscale / resolutionscale
@@ -99,8 +104,6 @@ worldmap <- getMap(resolution = "high")
 NorthAmerica <- worldmap[which(worldmap$REGION == "North America"),]
 plot(NorthAmerica, add=TRUE)  #add country boundary to the map
 map('lakes', add=TRUE, fill=TRUE, col='skyblue', boundary='black')
-
-
 
 #  9. Land mean, apply inverse power law model and negative exponential model
 #-----------------------------------------------------
