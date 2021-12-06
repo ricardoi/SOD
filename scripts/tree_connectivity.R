@@ -122,7 +122,7 @@ length(cellNumW) # number of pixel
 #-----------------------------------------------------
 #-----------------------------------------------------
 # 9.1a Apply inverse power law model
-index328 <- networkbeta(fd, beta0, cutoffadja0)
+index328 <- networkbeta(fddata, beta0, cutoffadja0)
 index329 <- networkbeta(beta,cutoffadja0)
 index330 <- networkbeta(beta1,cutoffadja0)
 
