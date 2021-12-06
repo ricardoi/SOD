@@ -80,6 +80,13 @@ res(fd.c)
 dim(fd.c)
 cellStats(fd.c, 'sum')
 
+## Note: In addition, non-forest pixels in the rasters are designated by a "-1" value - 
+## GNN is only applicable in forested areas and non-forest areas were not modeled.
+# Changing -1 to NA
+values(fd.c)
+library(tidyverse)
+values(fd.c) <- na_if(values(fd.c), -1)
+
 # Normalizing the data values
 fd.max <- max(na.omit((values(fd.c))))
 values(fd.c) <- values(fd.c)/fd.max
