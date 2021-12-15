@@ -16,8 +16,8 @@ setwd("~/Documents/Maps/Tree_species/")
 source("~/git_local/SOD/scripts/cropland_connectivity_functions.R")
 #-----------------------------------------------------
 # Set map resolution
-resolutionscale <- 6  # 6 of 5-min cells for 0.5 degree ###
-CellDegree <- 0.5                                  ###       
+resolutionscale <- 6  # original data 25x25  ### # 55.5 x 55.5 km # 6 of 5-min cells for 0.5 degree
+CellDegree <- 0.25     # I need to specify the correct cell degree ###       
 tree <- 'tanoek'                                   ###
 #-----------------------------------------------------
 # Customize crop and values of parameters
