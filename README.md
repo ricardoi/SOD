@@ -30,6 +30,7 @@ Evidence suggest that _P. ramorum_ spreads from nurseries to forests.
 ----------------
 
 ## Genome data
+`$PATH` to raw data of _P. ramorum_
 ```bash
 /nfs1/BPP/LeBoldus_Lab/lab_data/ramorum/1-EU1
 /nfs1/BPP/LeBoldus_Lab/lab_data/ramorum/2-NA1
