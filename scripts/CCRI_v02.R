@@ -21,7 +21,7 @@ library(rworldmap)
 library(sf)
 library(tmap)
 library(raster)
-#library(INA)
+library(INA)
 library(maptools)
 library(maps)
 
@@ -37,9 +37,9 @@ plot(fd)
 # transforming proj = aea (Azimutal equal area) to UWT
 # Range for Southwestern Oregon area               ###
 latifrom  <- -124.5 #latitude: from -48 to 76      ###
-latito    <- -123.4                                  ###
+latito    <- -123.7                                ###
 longifrom <- 42 #longitude: from -24 to 180        ###
-longito   <- 43 
+longito   <- 42.5    
 #---------------------------------------------------------------
 # creating color palette
 palette1 <- rev(viridis_pal(option = "B")(1000))
@@ -101,15 +101,29 @@ values(fd.c) <- na_if(values(fd.c), -1)
 fd.max <- max(na.omit((values(fd.c))))
 values(fd.c) <- values(fd.c)/fd.max
 fd.v <- getValues(fd.c)
-fd.v <- which(fd.v > 0)
+cropValue <- fd.v <- which(fd.v > 0)
 length(fd.v)
 
 #-------------------------------------------------------------
-cropValue <- fd.v
-fd.AggID <- which(fd.v > 0)
-cell_id <- fd.AggID
-length(fdAggID)
+# cropValue <- fd.v
+# fd.AggID <- which(fd.v > 0)
+# cell_id <- fd.AggID
+# length(fd.AggID)
 #writeRaster(potatoEthAgg, "potato_bdi_rwa_5min_cropland_density.tif")
+
+#-------------------------------------
+#agreggate
+fd.Agg <- aggregate(fd.c, fact = 32, fun=sum, na.action = na.omit) #aggregate raster as specified resolution, function=sum
+fd.Aggv <- getValues(fd.Agg)
+fd.AggID <- which(fd.Aggv > 0)
+cell_id <- fd.AggID
+length(fd.AggID)
+
+plot(fd.Agg)
+plot(NorthAmerica, add=TRUE)  #add country boundary to the map
+map('lakes', add=TRUE, fill=TRUE, col='skyblue', boundary='black')
+
+
 #--------------------------------------
 Xmin <- NULL
 Xmax <- NULL
@@ -117,6 +131,7 @@ Ymin <- NULL
 Ymax <- NULL
 
 for (i in 1:length(fd.AggID)) {
+  print(i)
   extCells <- extentFromCells(fd.c, fd.AggID[i])
   Xmin = c(Xmin, extCells[1])
   Xmax = c(Xmax, extCells[2])
@@ -268,11 +283,8 @@ CCRI_smarSurv_powerlaw_function <- function(beta, cutoffadja, distance_matrix, c
    return(list(index,smartsurv_score_meanarr))
    }
 
-```
 
 # CCRI calculated by negative exponential function 
-
-```{r ,fig.width=11.75, fig.height=6.0, dpi=150}
 
 CCRI_smarSurv_negExponential_function <-function(gamma,cutoffadja, distance_matrix, cropValue)   {
     ##############################################
@@ -360,54 +372,37 @@ CCRI_smarSurv_negExponential_function <-function(gamma,cutoffadja, distance_matr
 
    }
 
-```
 
 
 ## sensitivity analysis CCRI BY Inverse power-law function and negative exponential 
 
-```{r ,fig.width=11.75, fig.height=6.0, dpi=150}
 index1 <- CCRI_smarSurv_powerlaw_function(beta = 0.5, cutoffadja, distance_matrix, cropValue )
 index2 <- CCRI_smarSurv_powerlaw_function(beta = 1, cutoffadja, distance_matrix, cropValue)
 index3 <- CCRI_smarSurv_powerlaw_function(beta = 1.5, cutoffadja, distance_matrix, cropValue)
-```
 
 
-```{r}
+
 index4 <- CCRI_smarSurv_negExponential_function(gamma = 0.05, cutoffadja, distance_matrix, cropValue)
 index5 <- CCRI_smarSurv_negExponential_function(gamma = 0.1, cutoffadja, distance_matrix, cropValue)
 index6 <- CCRI_smarSurv_negExponential_function(gamma = 0.2, cutoffadja, distance_matrix, cropValue)
 index7 <- CCRI_smarSurv_negExponential_function(gamma = 0.3, cutoffadja, distance_matrix, cropValue)
 index8 <- CCRI_smarSurv_negExponential_function(gamma = 1, cutoffadja, distance_matrix, cropValue)
-```
+
 
 # Complete sensitivity analysis of CCRI 
 
-```{r ,fig.width=9, fig.height=8, dpi=150}
-
 mean_index <- (index1[[1]]+index2[[1]]+index3[[1]]+index4[[1]]+index5[[1]]+index6[[1]]+index7[[1]]+index8[[1]]) / 8
-
-indexpre <- potato_bdi_rwa
+indexpre <- fd.c #potato_bdi_rwa
 indexpre[cell_id] <- mean_index
 mean_index_raster <- indexpre
 #writeRaster(mean_index_raster, "CCRI_potato_bdi_rwa_5min_euclidean_distance.tif")
-
-```
-
+plot(mean_index_raster)
 
 # Complete sensitivity analysis of smartsurv score
 
-```{r ,fig.width=9, fig.height=8, dpi=150}
-
 smartsurvScore_index <- (index1[[2]] +index2[[2]] +index3[[2]] +index4[[2]] +index5[[2]] +index6[[2]] +index7[[2]] +index8[[2]]) / 8
-
-indexpre_score <- potato_bdi_rwa
-
+indexpre_score <- fd.c #potato_bdi_rwa
 indexpre_score[cell_id] <- smartsurvScore_index
 smartsurv_score_raster <- indexpre_score
 #writeRaster(smartsurv_score_raster, "smartsurv_score_potato_bdi_rwa_5min_euclidean_distance.tif")
-
-```
-
-
-
-
+plot(smartsurv_score_raster)
