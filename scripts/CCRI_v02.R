@@ -171,13 +171,13 @@ gamma<-0.2                                       ###
 gamma1<-0.3                                      ###
 gamma2<-1                                        ###
 crop<-'Tanoek' 
-cutoff1<- 0  #cropland density cutoff        ###
-cutoff2 <- 0
-cutoff3 <- 0
-cutoffadja <- 0
-cutoffadja1 <- 0# cutoff of adjancecy matrix     ###
-cutoffadja2 <- 0
-cutoffadja3 <- 0
+cutoff1<- 0.0015  #cropland density cutoff        ###
+cutoff2 <- 0.015
+cutoff3 <- 0.15
+cutoffadja <- 0.001
+cutoffadja1 <- 0.01 # cutoff of adjancecy matrix     ###
+cutoffadja2 <- 0.1
+cutoffadja3 <- 0.5
 
 #  Surveillance analysis: smartsurv analysis
 # 
@@ -392,7 +392,7 @@ index8 <- CCRI_smarSurv_negExponential_function(gamma = 1, cutoffadja, distance_
 # Complete sensitivity analysis of CCRI 
 
 mean_index <- (index1[[1]]+index2[[1]]+index3[[1]]+index4[[1]]+index5[[1]]+index6[[1]]+index7[[1]]+index8[[1]]) / 8
-indexpre <- fd.c #potato_bdi_rwa
+indexpre <- fd.Agg #potato_bdi_rwa
 indexpre[cell_id] <- mean_index
 mean_index_raster <- indexpre
 #writeRaster(mean_index_raster, "CCRI_potato_bdi_rwa_5min_euclidean_distance.tif")
@@ -401,7 +401,7 @@ plot(mean_index_raster)
 # Complete sensitivity analysis of smartsurv score
 
 smartsurvScore_index <- (index1[[2]] +index2[[2]] +index3[[2]] +index4[[2]] +index5[[2]] +index6[[2]] +index7[[2]] +index8[[2]]) / 8
-indexpre_score <- fd.c #potato_bdi_rwa
+indexpre_score <- fd.Agg #potato_bdi_rwa
 indexpre_score[cell_id] <- smartsurvScore_index
 smartsurv_score_raster <- indexpre_score
 #writeRaster(smartsurv_score_raster, "smartsurv_score_potato_bdi_rwa_5min_euclidean_distance.tif")
