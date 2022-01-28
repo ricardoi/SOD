@@ -2,7 +2,7 @@
 # author: Yanru Xing @GarretLab
 # adapted: Ricardo I Alcala
 # date: "`r format(Sys.time(), '%d %B, %Y')`"
-# 
+#
 # output:
 #   html_document:
 #     toc: true
@@ -29,8 +29,8 @@ library(maps)
 setwd("~/Documents/Maps/Tree_species/")
 #---------------------------------------------------------------
 # load raster
-forestden <- raster("rasters/lide3_ba_2017.tif")  
-fd <- projectRaster(forestden, 
+forestden <- raster("rasters/lide3_ba_2017.tif")
+fd <- projectRaster(forestden,
                     crs ="+proj=longlat +zone=18 +ellps=WGS84 +datum=WGS84 +units=m +no_defs") #utm
 plot(fd)
 #---------------------------------------------------------------
@@ -39,7 +39,7 @@ plot(fd)
 latifrom  <- -124.5 #latitude: from -48 to 76      ###
 latito    <- -123.7                                ###
 longifrom <- 42 #longitude: from -24 to 180        ###
-longito   <- 42.5    
+longito   <- 42.5
 #---------------------------------------------------------------
 # creating color palette
 palette1 <- rev(viridis_pal(option = "B")(1000))
@@ -48,7 +48,7 @@ colid <- c(1, colid )
 palette1<-palette1[colid]
 #----------------------------------------------
 
-colPalletNew <- c( "#F4E156FF", "#F6D746FF", "#F8CD37FF", "#FAC329FF", "#FBB91EFF", "#FCAF13FF", 
+colPalletNew <- c( "#F4E156FF", "#F6D746FF", "#F8CD37FF", "#FAC329FF", "#FBB91EFF", "#FCAF13FF",
                    "#FCA50BFF", "#FB9C06FF", "#FA9207FF", "#F8890CFF", "#F68013FF", "#F37819FF",
                    "#F06F20FF", "#EC6727FF", "#E85F2EFF", "#E25834FF", "#DD5139FF", "#D74B3FFF",
                    "#D04545FF", "#CA404AFF", "#C33B4FFF", "#BC3754FF", "#B43359FF", "#AC305EFF",
@@ -84,10 +84,10 @@ plot(NorthAmerica, add=TRUE)  #add country boundary to the map
 
 # s.sf_Burundi <- st_read("bdi_admbnda_adm0_igebu_ocha_itos_20171103.shp")
 # potato_bdi <- crop(PotatoAFRICA, s.sf_Burundi)
-# 
+#
 # s.sf_Rwanda <- st_read("rwa_adm0_2006_NISR_WGS1984_20181002.shp")
 # potato_rwa <- crop(PotatoAFRICA, s.sf_Rwanda)
-# 
+#
 # potato_bdi_rwa <- merge(potato_bdi, potato_rwa)
 # plot(potato_bdi_rwa)
 # plot(countriesLow, add = TRUE)
@@ -98,10 +98,15 @@ plot(NorthAmerica, add=TRUE)  #add country boundary to the map
 library(tidyverse)
 values(fd.c) <- na_if(values(fd.c), -1)
 # Normalizing the data values
-fd.max <- max(na.omit((values(fd.c))))
+
+# NO MISSING VALUES HERE
+
+fd.max <- max(na.omit((values(fd.c)))) # thats my vector of densities, location will be change
 values(fd.c) <- values(fd.c)/fd.max
 fd.v <- getValues(fd.c)
-cropValue <- fd.v <- which(fd.v > 0)
+fd.v[!fd.v > 0] <- 0   #which(fd.v > 0)
+fd.v[is.na(fd.v)] <- 0
+cropValue <- fd.v
 length(fd.v)
 
 #-------------------------------------------------------------
@@ -170,7 +175,7 @@ gamma0<-0.1                                      ###
 gamma<-0.2                                       ###
 gamma1<-0.3                                      ###
 gamma2<-1                                        ###
-crop<-'Tanoek' 
+crop<-'Tanoek'
 cutoff1<- 0.0015  #cropland density cutoff        ###
 cutoff2 <- 0.015
 cutoff3 <- 0.15
@@ -180,31 +185,34 @@ cutoffadja2 <- 0.1
 cutoffadja3 <- 0.5
 
 #  Surveillance analysis: smartsurv analysis
-# 
+#
 # smartsurv is another evaluating the value of nodes for surveillance in studying
 # the invasion of a bioentity as part of a smart surveillance strategy.
-# 
+#
 # The stoch = TRUE is selected, then the entries in the matrix are taken as
 # probabilities and within a realization an adjacency matrix of 1s and 0s is
 # generated based on these probabilities.  The number of realizations for analysis
 # was nrealz = 10.
-# 
+#
 # Note that it is assumed that the diagonal of the adjacency matrix is 1 (i.e.,
 # that once the bioentity reaches a location it stays there) – otherwise, the
 # stopping algorithm will not function correctly.
-# 
+#
 # ## smartsurv
 # Perforem smartsurv analysis for the observed Kenya local seed potato trade
 # network.
 
-# CCRI calculated by Inverse power-law function 
-#CCRI BY Inverse power-law function 
+library(devtools)
+devtools::install_github("GarrettLab/INA")
+library(INA)
+# CCRI calculated by Inverse power-law function
+#CCRI BY Inverse power-law function
 #This version is revised on 07/23/2020
 
 CCRI_smarSurv_powerlaw_function <- function(beta, cutoffadja, distance_matrix, cropValue)   {
     ##############################################
     #### create adjacency matrix
-    
+
     distancematr <- distance_matrix # pairwise distance matrix
   #---- end of code
     distancematrexp <- distancematr^(-beta) #use function C=AX^(-beta), here A=1, X=distancematr
@@ -214,7 +222,7 @@ CCRI_smarSurv_powerlaw_function <- function(beta, cutoffadja, distance_matrix, c
 
     cropmatrix <- cropmatr1 %*% cropmatr2
     cropmatrix <- as.matrix(cropmatrix)
-    
+
     #-------------------------------------------
     # Rescale cropmatrix and distancematrexp to give them the same weight in the gravity model
     cropmatrix <- cropmatrix/max(cropmatrix)
@@ -222,7 +230,7 @@ CCRI_smarSurv_powerlaw_function <- function(beta, cutoffadja, distance_matrix, c
     distancematrexp <- distancematrexp/ max(distancematrexp)
     #-------------------------------------------
     cropdistancematr <- distancematrexp * cropmatrix # adjacecy matrix
-  
+
     is.matrix(distancematrexp)
     logicalmatr <- cropdistancematr > cutoffadja # adjacency matrix after threshold
     stan <- cropdistancematr * logicalmatr
@@ -236,8 +244,8 @@ CCRI_smarSurv_powerlaw_function <- function(beta, cutoffadja, distance_matrix, c
     A1 <- smartsurv(adjmat=stan_smart, stoch=T, nrealz=5)
     A1mean <- A1$meanarr
     smartsurv_score_meanarr <- colMeans(A1mean)
-    #range(smartsurv_score_meanarr) 
-    
+    #range(smartsurv_score_meanarr)
+
     ##############################################
    ## sum of nearest neighbors degree
    knnpref0<-graph.knn(cropdistancematrix,weights=NA)$knn
@@ -248,22 +256,22 @@ CCRI_smarSurv_powerlaw_function <- function(beta, cutoffadja, distance_matrix, c
        if(max(knnpref)>0){knnprefp=knnpref/max(knnpref)/6}
 
    ##############################################
-   #### node degree, node strengh 
+   #### node degree, node strengh
    ####
-   nodestrength<-graph.strength(cropdistancematrix) 
+   nodestrength<-graph.strength(cropdistancematrix)
    nodestrength[is.na(nodestrength)]<-0
      if(max(nodestrength)==0){nodestr=0}else
         if(max(nodestrength)>0){nodestr=nodestrength/max(nodestrength)/6}
    ##############################################
    #### betweenness centrality
-   #### 
+   ####
    between<-betweenness(cropdistancematrix)
    between[is.na(between)]<-0
     if(max(between)==0){betweenp=0}else
         if(max(between)>0){betweenp=between/max(between)/2}
    ##############################################
    #### eigenvector and eigenvalues
-   #### 
+   ####
    eigenvectorvalues<-evcent(cropdistancematrix)
    ev<-eigenvectorvalues$vector
     ev[is.na(ev)]<-0
@@ -271,28 +279,28 @@ CCRI_smarSurv_powerlaw_function <- function(beta, cutoffadja, distance_matrix, c
         if(max(ev)!=0){evp=ev/max(ev)/6}
    ##############################################
    #### CCRI is a weighted mean of 4 network metric
-   ####    
+   ####
  index<-knnprefp+evp+betweenp+nodestr
-   
+
 #    indexpre<-cropRaster
 # #   indexpre[]<- NaN
 #    indexpre[CellNumber]<- index
 #    indexv<-indexpre
 #    return(indexv)
-   
+
    return(list(index,smartsurv_score_meanarr))
    }
 
 
-# CCRI calculated by negative exponential function 
+# CCRI calculated by negative exponential function
 
 CCRI_smarSurv_negExponential_function <-function(gamma,cutoffadja, distance_matrix, cropValue)   {
     ##############################################
     #### create adjacency matrix
     ####
     distancematr <- distance_matrix
-   
-    
+
+
     eulernumber <- exp(1)
     distancematrexponential <- eulernumber ^ (-gamma * distancematr)# exponential model
     cropmatr <- cropValue # complete gravity model with crop data
@@ -306,7 +314,7 @@ CCRI_smarSurv_negExponential_function <-function(gamma,cutoffadja, distance_matr
     diag(distancematrexponential) <- 0
     distancematrexponential <- distancematrexponential/ max(distancematrexponential)
     #-------------------------------------------
-    
+
     cropdistancematr <- distancematrexponential * cropmatrix
     logicalmatr <- cropdistancematr > cutoffadja
     stan <- cropdistancematr * logicalmatr
@@ -319,8 +327,8 @@ CCRI_smarSurv_negExponential_function <-function(gamma,cutoffadja, distance_matr
     A1 <- smartsurv(adjmat=stan_smart, stoch=T, nrealz=5)
     A1mean <- A1$meanarr
     smartsurv_score_meanarr <- colMeans(A1mean)
-    #range(smartsurv_score_meanarr) 
-    
+    #range(smartsurv_score_meanarr)
+
     ##############################################
     #### create network for all the selected nodes
     ####
@@ -338,22 +346,22 @@ CCRI_smarSurv_negExponential_function <-function(gamma,cutoffadja, distance_matr
        if(max(knnpref)>0){knnprefp=knnpref/max(knnpref)/6}
 
    ##############################################
-   #### node degree, node strengh 
+   #### node degree, node strengh
    ####
-   nodestrength<-graph.strength(cropdistancematrix) 
+   nodestrength<-graph.strength(cropdistancematrix)
    nodestrength[is.na(nodestrength)]<-0
      if(max(nodestrength)==0){nodestr=0}else
         if(max(nodestrength)>0){nodestr=nodestrength/max(nodestrength)/6}
    ##############################################
    #### betweenness centrality
-   #### 
+   ####
    between<-betweenness(cropdistancematrix)
    between[is.na(between)]<-0
     if(max(between)==0){betweenp=0}else
         if(max(between)>0){betweenp=between/max(between)/2}
    ##############################################
    #### eigenvector and eigenvalues
-   #### 
+   ####
    eigenvectorvalues<-evcent(cropdistancematrix)
    ev<-eigenvectorvalues$vector
     ev[is.na(ev)]<-0
@@ -361,9 +369,9 @@ CCRI_smarSurv_negExponential_function <-function(gamma,cutoffadja, distance_matr
         if(max(ev)!=0){evp=ev/max(ev)/6}
    ##############################################
    #### plot index layer
-   ####    
+   ####
  index<-knnprefp+evp+betweenp+nodestr
-# #   indexpre[]<- NaN   
+# #   indexpre[]<- NaN
 #    indexpre<-cropRaster
 #    indexpre[CellNumber] <- index
 #    indexv<-indexpre
@@ -374,7 +382,7 @@ CCRI_smarSurv_negExponential_function <-function(gamma,cutoffadja, distance_matr
 
 
 
-## sensitivity analysis CCRI BY Inverse power-law function and negative exponential 
+## sensitivity analysis CCRI BY Inverse power-law function and negative exponential
 
 index1 <- CCRI_smarSurv_powerlaw_function(beta = 0.5, cutoffadja, distance_matrix, cropValue )
 index2 <- CCRI_smarSurv_powerlaw_function(beta = 1, cutoffadja, distance_matrix, cropValue)
@@ -389,10 +397,10 @@ index7 <- CCRI_smarSurv_negExponential_function(gamma = 0.3, cutoffadja, distanc
 index8 <- CCRI_smarSurv_negExponential_function(gamma = 1, cutoffadja, distance_matrix, cropValue)
 
 
-# Complete sensitivity analysis of CCRI 
+# Complete sensitivity analysis of CCRI
 
 mean_index <- (index1[[1]]+index2[[1]]+index3[[1]]+index4[[1]]+index5[[1]]+index6[[1]]+index7[[1]]+index8[[1]]) / 8
-indexpre <- fd.Agg #potato_bdi_rwa
+indexpre <- fd.Agg #potato_bdi_rwa= should be a raster
 indexpre[cell_id] <- mean_index
 mean_index_raster <- indexpre
 #writeRaster(mean_index_raster, "CCRI_potato_bdi_rwa_5min_euclidean_distance.tif")
