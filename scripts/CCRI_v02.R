@@ -122,6 +122,9 @@ fd.Agg <- aggregate(fd.c, fact = 32, fun=sum, na.action = na.omit) #aggregate ra
 fd.Aggv <- getValues(fd.Agg)
 fd.AggID <- which(fd.Aggv > 0)
 cell_id <- fd.AggID
+
+# NO PUEDO TENER NEGATIVOS en fd.Agg
+
 length(fd.AggID)
 
 plot(fd.Agg)
@@ -176,10 +179,10 @@ gamma<-0.2                                       ###
 gamma1<-0.3                                      ###
 gamma2<-1                                        ###
 crop<-'Tanoek'
-cutoff1<- 0.0015  #cropland density cutoff        ###
-cutoff2 <- 0.015
-cutoff3 <- 0.15
-cutoffadja <- 0.001
+cutoff1<- 0.01  #cropland density cutoff        ###
+cutoff2 <- 0.1
+cutoff3 <- 1
+cutoffadja <- 0.01
 cutoffadja1 <- 0.01 # cutoff of adjancecy matrix     ###
 cutoffadja2 <- 0.1
 cutoffadja3 <- 0.5
