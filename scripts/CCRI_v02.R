@@ -96,16 +96,20 @@ plot(NorthAmerica, add=TRUE)  #add country boundary to the map
 #------------------------------------------------------------
 # normalizng data
 library(tidyverse)
-values(fd.c) <- na_if(values(fd.c), -1)
-# Normalizing the data values
+values(fd.c)[values(fd.c) < 0] <- 0
+#values(fd.c) <- na_if(values(fd.c), 0)
+values(fd.c)[is.na(values(fd.c))] <- 0
+values(fd.c)
 
+# Normalizing the data values
+ 
 # NO MISSING VALUES HERE
 
 fd.max <- max(na.omit((values(fd.c)))) # thats my vector of densities, location will be change
 values(fd.c) <- values(fd.c)/fd.max
 fd.v <- getValues(fd.c)
-fd.v[!fd.v > 0] <- 0   #which(fd.v > 0)
-fd.v[is.na(fd.v)] <- 0
+#fd.v[!fd.v > 0] <- 0   #which(fd.v > 0)
+#fd.v[is.na(fd.v)] <- 0
 cropValue <- fd.v
 length(fd.v)
 
@@ -122,10 +126,9 @@ fd.Agg <- aggregate(fd.c, fact = 32, fun=sum, na.action = na.omit) #aggregate ra
 fd.Aggv <- getValues(fd.Agg)
 fd.AggID <- which(fd.Aggv > 0)
 cell_id <- fd.AggID
-
+length(fd.AggID)
 # NO PUEDO TENER NEGATIVOS en fd.Agg
 
-length(fd.AggID)
 
 plot(fd.Agg)
 plot(NorthAmerica, add=TRUE)  #add country boundary to the map
@@ -179,13 +182,13 @@ gamma<-0.2                                       ###
 gamma1<-0.3                                      ###
 gamma2<-1                                        ###
 crop<-'Tanoek'
-cutoff1<- 0.01  #cropland density cutoff        ###
-cutoff2 <- 0.1
-cutoff3 <- 1
+cutoff1<- 0.001  #cropland density cutoff        ###
+cutoff2 <- 0.01
+cutoff3 <- 0.1
 cutoffadja <- 0.01
-cutoffadja1 <- 0.01 # cutoff of adjancecy matrix     ###
-cutoffadja2 <- 0.1
-cutoffadja3 <- 0.5
+cutoffadja1 <- 0.001 # cutoff of adjancecy matrix     ###
+cutoffadja2 <- 0.01
+cutoffadja3 <- 0.1
 
 #  Surveillance analysis: smartsurv analysis
 #
